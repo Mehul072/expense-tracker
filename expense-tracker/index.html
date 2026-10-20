@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Expense Tracker</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --fg:#1d2330; --muted:#6b7280; --line:#e5e7eb; --accent:#2563eb; --red:#dc2626; --green:#16a34a; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#111418; --card:#1a1f26; --fg:#e6e8eb; --muted:#9aa3ae; --line:#2a313a; } }
+  * { box-sizing: border-box; }
+  body { margin:0; font:15px/1.4 system-ui, sans-serif; background:var(--bg); color:var(--fg); }
+  main { max-width:720px; margin:0 auto; padding:16px; display:grid; gap:16px; }
+  section { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px; }
+  h2 { margin:0 0 12px; font-size:16px; }
+  form { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  input, select, button { font:inherit; padding:8px 10px; border:1px solid var(--line); border-radius:6px; background:var(--card); color:var(--fg); }
+  button { background:var(--accent); color:#fff; border:0; cursor:pointer; }
+  button.link { background:none; color:var(--muted); padding:0 4px; }
+  [hidden] { display:none !important; }
+  .balances { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; text-align:center; }
+  .balances small { color:var(--muted); display:block; }
+  .balances b { font-size:20px; }
+  .row { display:flex; justify-content:space-between; gap:8px; padding:8px 0; border-top:1px solid var(--line); }
+  .row small { color:var(--muted); }
+  .neg { color:var(--red); } .pos { color:var(--green); }
+  header { display:flex; justify-content:space-between; align-items:center; }
+  #auth-msg { color:var(--muted); width:100%; margin:0; }
+</style>
+</head>
+<body>
+<main>
+  <section id="auth" hidden>
+    <h2>Expense Tracker</h2>
+    <form id="auth-form">
+      <input id="email" type="email" placeholder="Email" required autocomplete="email">
+      <input id="password" type="password" placeholder="Password (min 6)" minlength="6" required autocomplete="current-password">
+      <button value="signin">Sign in</button>
+      <button value="signup">Sign up</button>
+      <p id="auth-msg"></p>
+    </form>
+  </section>
+
+  <div id="app" hidden style="display:grid; gap:16px">
+    <header><b id="who"></b><button class="link" id="logout">Log out</button></header>
+
+    <section class="balances">
+      <div><small>Online</small><b id="bal-online"></b></div>
+      <div><small>Cash</small><b id="bal-cash"></b></div>
+      <div><small>Total</small><b id="bal-total"></b></div>
+    </section>
+
+    <section>
+      <h2>Add</h2>
+      <form id="txn-form">
+        <select name="kind">
+          <option value="expense">Expense</option>
+          <option value="income">Income</option>
+          <option value="transfer">Transfer</option>
+        </select>
+        <select name="account">
+          <option value="online">Online</option>
+          <option value="cash">Cash</option>
+        </select>
+        <span id="to-label" hidden></span>
+        <input name="amount" type="number" step="0.01" min="0.01" placeholder="Amount" required>
+        <input name="category" list="categories" placeholder="Category">
+        <input name="note" placeholder="Note">
+        <input name="date" type="date" required>
+        <button>Add</button>
+      </form>
+      <datalist id="categories">
+        <option>Food</option><option>Transport</option><option>Rent</option><option>Bills</option>
+        <option>Shopping</option><option>Health</option><option>Entertainment</option><option>Other</option>
+      </datalist>
+    </section>
+
+    <section>
+      <h2>Set balance</h2>
+      <form id="bal-form">
+        <select name="account">
+          <option value="online">Online</option>
+          <option value="cash">Cash</option>
+        </select>
+        <input name="amount" type="number" step="0.01" placeholder="Current amount" required>
+        <button>Set</button>
+      </form>
+    </section>
+
+    <section>
+      <header><h2>Month</h2><input id="month" type="month"></header>
+      <div id="summary"></div>
+      <div id="list"></div>
+    </section>
+  </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="app.js"></script>
+</body>
+</html>
